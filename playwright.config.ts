@@ -4,7 +4,7 @@ import baseEnvUrl from './tests/utils/environmentBaseUrl';
 require('dotenv').config();
 
 export default defineConfig({
-  globalSetup: require.resolve('./tests/setup/global-setup'),
+  // globalSetup: require.resolve('./tests/setup/global-setup'),
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: 0,
@@ -12,7 +12,7 @@ export default defineConfig({
   reporter: 'html',
   // timeout: 5000,
   use: {
-    storageState: 'storageState.json',
+    // storageState: 'storageState.json',
     trace: 'on',
     baseURL: process.env.ENV === 'production' 
       ? baseEnvUrl.production.home
@@ -25,6 +25,14 @@ export default defineConfig({
     { 
       name: 'auth-setup', 
       testMatch: /auth-setup\.ts/ 
+    },
+    {
+      name: 'resolver-auth-setup',
+      testMatch: /resolver-auth-setup\.ts/,
+      use: { 
+        baseURL: 'https://release-2331.staging.resolver.com/',
+        // headless: false 
+      }
     },
     {
       name: 'chromium',
@@ -40,6 +48,27 @@ export default defineConfig({
         // storageState: '.auth/admin.json', //use this in case you have multiple projects one per user
       },
       dependencies: ['auth-setup'],
+    },
+    {
+      name: 'resolver',
+      testMatch: /resolver.*spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        headless: false,
+        baseURL: 'https://release-2331.staging.resolver.com/',
+        storageState: 'resolverStorageState.json',      
+      }
+    },
+    {
+      name: 'resolver-auth',
+      testMatch: /resolver.*spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        // headless: false,
+        baseURL: 'https://release-2331.staging.resolver.com/',
+        storageState: '.auth/resolverAdmin.json',      
+      },
+      dependencies: ['resolver-auth-setup'],
     },
   ],
 });
