@@ -4,7 +4,7 @@ import baseEnvUrl from './tests/utils/environmentBaseUrl';
 require('dotenv').config();
 
 export default defineConfig({
-  // globalSetup: require.resolve('./tests/setup/global-setup'),
+  globalSetup: require.resolve('./tests/setup/global-setup'),
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: 0,
@@ -12,7 +12,12 @@ export default defineConfig({
   reporter: 'html',
   // timeout: 5000,
   use: {
-    // storageState: 'storageState.json',
+    storageState: 'storageState.json',
+    // launchOptions: {
+    //   args: ['--start-maximized']
+    // },
+    // viewport: null,
+    viewport: { width: 1920, height: 1080},
     trace: 'on',
     baseURL: process.env.ENV === 'production' 
       ? baseEnvUrl.production.home
@@ -24,7 +29,10 @@ export default defineConfig({
   projects: [
     { 
       name: 'auth-setup', 
-      testMatch: /auth-setup\.ts/ 
+      testMatch: /\/auth-setup\.ts/ ,
+      use: {
+        headless: false
+      }
     },
     {
       name: 'resolver-auth-setup',
@@ -39,13 +47,15 @@ export default defineConfig({
       use: { 
         ...devices['Desktop Chrome'],
         storageState: 'storageState.json',
+        viewport: { width: 1920, height: 1080}
        },
     },
     {
       name: 'chromium-auth',
       use: { 
         ...devices['Desktop Chrome'] ,
-        // storageState: '.auth/admin.json', //use this in case you have multiple projects one per user
+        headless: false,
+        storageState: '.auth/admin.json' //use this in case you have multiple projects one per user
       },
       dependencies: ['auth-setup'],
     },

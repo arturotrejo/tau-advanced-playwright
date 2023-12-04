@@ -1,6 +1,20 @@
-import { test as setup, type Page } from '@playwright/test';
+import { test as setup, type Page, chromium } from '@playwright/test';
 import LoginPage from '../ui/pages/login-page';
 import uiPages from '../utils/uiPages';
+
+const authFile = '.auth/api-admin.json';
+
+setup('authenticate', async ({ request }) => {
+  
+  // Send authentication request. Replace with your own.
+  await request.post('https://demoqa.com/Account/v1/GenerateToken', {
+    form: {
+      "email":"tau-admin",
+      "password":"TestingWithR3n@t@"}
+    });
+  
+  await request.storageState({ path: authFile });
+});
 
 const adminFile = '.auth/admin.json';
 

@@ -3,4 +3,5 @@ export default {
   homePage: 'home',
   loginPage: 'login',
   profile: 'profile',
+  formPage: 'form',
 };
